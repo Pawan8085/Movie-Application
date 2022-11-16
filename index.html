@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+        input{
+            width: 200px;
+            border-radius: 20px;
+            border: 1px solid gray;
+            padding: 8px 110px 8px 15px;
+        }
+        #movies{
+            width: 300px;
+            height: 600px;  
+        }
+        #myinput{
+            position: relative;
+        }
+        #container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #logo{
+          position: absolute;
+           top: 85px;
+           right: 160px;
+        }
+        #logo>img{
+            width: 6%;  
+        }
+        #showdata{
+            height: 100%;
+            width: 240px;
+            margin-top: 10px;  
+            margin-left: 300px;   
+        }
+        #showdata>img{
+           height: 300px;
+           width: 100%;
+        }
+        #showdata>img+p{
+            margin-bottom: -15px;
+            margin-top: -1px;
+        }
+        #showdata>img+p+p{
+            margin-bottom: -15px;
+        }
+        #appendhere{
+            margin-left: 700px;
+            margin-top: -640px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+
+    
+    <h2>Enter Movie below</h2>
+    <div id="myinput"> 
+  <input oninput="debounce(main,1000)" type="text" id="query" >  
+</div>
+  <div id="movies">
+
+  </div>
+  <div id="logo">
+      <img src="spnG.png" alt="">
+  </div>
+</div>
+<div id="appendhere"></div>
+</body>
+</html>
+<script>
+
+async function searchMovies(q){
+    try{
+        let url=`https://www.omdbapi.com/?s=${q}&apikey=78bdd047`;
+    let res = await fetch(url);
+    let data = await res.json()
+    return data;
+    }
+    catch (error){
+        console.log(error);
+    }
+    
+}  
+let movies_div=document.getElementById('movies');  
+let appendhere=document.getElementById('appendhere');  
+
+function appendMovies(movies){
+    if(movies===undefined){
+        return false;
+    }
+    movies_div.innerHTML=null;
+
+    movies.forEach(function(element) {
+        
+        let p=document.createElement('p');
+        p.innerText=element.Title;
+        p.style.cursor='pointer'
+        p.addEventListener('click',func);
+        function func(){
+            //Title: 'Hera Pheri', Year: '2000', imdbID: 'tt0242519', Type: 'movie', Poster: 'https://m.media-amazon.com/images/M/MV5BNDExMTBlZT…Tc0ODZkXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_SX300.jpg'
+            
+            appendhere.innerHTML=null;
+            var div=document.createElement('div');
+            div.innerHTML=null;
+            div.setAttribute('id','showdata');
+            var img=document.createElement('img');
+            img.src=element.Poster;
+            var _p=document.createElement('p');
+            _p.innerText=`Movie Name - ${element.Title}`
+            var p1=document.createElement('p');
+            p1.innerText=`Year - ${element.Year}`
+            var p2=document.createElement('p');
+            p2.innerText=`imdbID - ${element.imdbID}`;
+            
+            div.append(img,_p,p1,p2);
+            
+            appendhere.append(div);
+
+        }
+        movies_div.append(p);
+        
+    });
+}   
+async function main(){
+    let query=document.getElementById('query').value;
+    if(query==''){
+        movies_div.innerHTML=null;
+        showhere.innerHTML=null;
+        // window.location.reload();
+    }
+    let reponse=searchMovies(query);
+    let data = await reponse;
+    // console.log(data)
+    appendMovies(data.Search)
+
+}
+let id;
+function debounce(func,delay){
+    if(id){
+        clearTimeout(id);
+    }
+    id = setTimeout(function(){
+        func()
+    },delay)
+}
+</script>
